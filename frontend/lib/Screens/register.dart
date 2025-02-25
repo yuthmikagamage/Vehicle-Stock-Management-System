@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Register',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.blueGrey,
-      ),
-      body: Padding(
+        body: Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+        const Color.fromARGB(255, 255, 255, 255),
+        const Color.fromARGB(255, 26, 123, 226)
+      ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+      child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Center(
           child: Column(
@@ -19,10 +19,11 @@ class RegisterPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Register to your account here',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                'Register Account',
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold, fontSize: 30),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 50),
               TextField(
                 decoration: InputDecoration(
                   labelText: "Enter your email",
@@ -51,7 +52,7 @@ class RegisterPage extends StatelessWidget {
                           color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueGrey,
+                      backgroundColor: const Color.fromARGB(255, 7, 84, 122),
                     ),
                   ),
                 ),
@@ -60,6 +61,6 @@ class RegisterPage extends StatelessWidget {
           ),
         ),
       ),
-    );
+    ));
   }
 }

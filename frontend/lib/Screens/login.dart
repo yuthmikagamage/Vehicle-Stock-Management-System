@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'HomePage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -10,15 +12,13 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Vehicle Stock Manager',
-          style: TextStyle(fontSize: 25),
-        ),
-        backgroundColor: Colors.blueGrey,
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
+        body: Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [
+        const Color.fromARGB(255, 255, 255, 255),
+        const Color.fromARGB(255, 26, 123, 226)
+      ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+      child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Column(
@@ -26,10 +26,14 @@ class LoginPageState extends State<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Login to Your Account Here',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                'Login Account',
+                style: GoogleFonts.poppins(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2.0,
+                ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 50),
               TextField(
                 decoration: InputDecoration(
                   labelText: 'Email',
@@ -50,7 +54,10 @@ class LoginPageState extends State<LoginPage> {
                 height: 55.0,
                 child: ElevatedButton(
                   onPressed: () {
-                    print('Login Presssed');
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
                   },
                   child: Text(
                     'Login',
@@ -61,7 +68,7 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
+                    backgroundColor: const Color.fromARGB(255, 7, 84, 122),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -69,38 +76,24 @@ class LoginPageState extends State<LoginPage> {
                 ),
               )),
               SizedBox(height: 20),
-              Text(
-                'Dont have account?',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
               Center(
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 55.0,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueGrey),
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisterPage()),
-                      );
-                    },
-                    child: Text(
-                      'Register',
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
+                  child: GestureDetector(
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                  );
+                },
+                child: Text(
+                  'Dont have account? Register Here',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
                 ),
-              )
+              )),
+              SizedBox(height: 10),
             ],
           ),
         ),
       ),
-    );
+    ));
   }
 }
