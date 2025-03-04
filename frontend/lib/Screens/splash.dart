@@ -28,7 +28,7 @@ class SplashScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 Text(
-                  'StockTracer',
+                  'StockTRC',
                   style: GoogleFonts.poppins(
                     fontSize: 30.0,
                     fontWeight: FontWeight.bold,

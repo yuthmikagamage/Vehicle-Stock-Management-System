@@ -16,7 +16,7 @@ const userSchema = new Schema({
         required:true,
     }
 })
-//when save comes in service.js this function will call
+
 userSchema.pre('save',async function () {
     try{
         var user = this;
