@@ -14,8 +14,6 @@ class UserService{
     static async checkuser(email){
         try{
             return await userModel.findOne({email});
-
-
         }catch(error){
             throw error
         }

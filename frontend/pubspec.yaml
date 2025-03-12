@@ -14,6 +14,8 @@ dependencies:
   google_fonts: ^5.0.0 # Corrected position of google_fonts package
   cupertino_icons: ^1.0.8
   http:
+  shared_preferences: ^2.2.0
+  jwt_decoder:
 
 dev_dependencies:
   flutter_test:

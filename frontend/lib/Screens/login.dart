@@ -1,7 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:frontend/config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'register.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'HomePage.dart';
@@ -17,6 +17,17 @@ class LoginPageState extends State<LoginPage> {
   TextEditingController passwordcontroller = TextEditingController();
   bool _isLoading = false;
   bool _isNotValidate = false;
+  late SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+    initSharedPref();
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
+  }
 
   void loginUser() async {
     if (emailcontroller.text.isNotEmpty && passwordcontroller.text.isNotEmpty) {
@@ -29,7 +40,7 @@ class LoginPageState extends State<LoginPage> {
       };
 
       try {
-        var responce = await http.post(
+        var response = await http.post(
           Uri.parse(login),
           headers: {"Content-Type": "application/json"},
           body: jsonEncode(regbody),
@@ -38,34 +49,39 @@ class LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
 
-        if (responce.statusCode == 200) {
-          var jsonresponce = jsonDecode(responce.body);
-          if (jsonresponce['status']) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text("Login Suessfull")));
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(
-                      'Registration failed: ${jsonresponce['message'] ?? "Unknown error"}')),
-            );
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error : ${responce.statusCode}")),
-          );
+        var jsonResponse = jsonDecode(response.body);
+
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(jsonResponse['message'] ?? "Unknown response"),
+          backgroundColor: jsonResponse['status']
+              ? const Color.fromARGB(255, 6, 76, 8)
+              : const Color.fromARGB(255, 92, 13, 8),
+        ));
+
+        if (jsonResponse['status']) {
+          var myToken = jsonResponse['token'];
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomePage(token: myToken)));
         }
       } catch (e) {
         setState(() {
           _isLoading = false;
         });
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error : $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Connection error: $e'),
+          backgroundColor: const Color.fromARGB(255, 92, 13, 8),
+        ));
       }
     } else {
       setState(() {
         _isNotValidate = true;
       });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Please fill all fields'),
+        backgroundColor: const Color.fromARGB(255, 118, 71, 2),
+      ));
     }
   }
 
