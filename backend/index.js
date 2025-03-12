@@ -3,6 +3,7 @@ const app = require('./app');
 const db = require('./config/db')
 
 const userModel = require('./model/user.mode')
+const vehicleModel = require('./model/vehicle.model')
 
 const port = 3000;
 
