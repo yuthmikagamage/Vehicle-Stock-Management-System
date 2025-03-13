@@ -31,3 +31,17 @@ exports.getUserVehicle = async (req, res, next) => {
     }
   };
 
+  exports.deleteVehicle = async (req, res, next) => {
+    try {
+      const id = req.query.id || req.body.id;
+      
+      if (!id) {
+        return res.status(400).json({ status: false, message: "userId is required" });
+      }
+      
+      let deleted = await vehicleServices.deleteVehicleData(id);
+      res.json({ status: true, success: deleted });
+    } catch (error) {
+      next(error);
+    }
+  };

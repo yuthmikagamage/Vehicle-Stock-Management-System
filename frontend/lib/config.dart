@@ -3,3 +3,4 @@ final String registration = url + "registration";
 final String login = url + "login";
 final String addCar = url + "storeVehicle";
 final String getVehicles = url + "getVehicle";
+final String deleteVehicles = url + "deleteVehicle";

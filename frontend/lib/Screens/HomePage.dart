@@ -114,6 +114,23 @@ class _HomeState extends State<HomePage> {
     }
   }
 
+  void deleteItem(id) async {
+    var regBody = {
+      "id": id,
+    };
+
+    var responce = await http.post(
+      Uri.parse(deleteVehicles),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(regBody),
+    );
+
+    var jsonResponce = jsonDecode(responce.body);
+    if (jsonResponce['status']) {
+      getVehiclesList(userId);
+    }
+  }
+
   Future<void> _displayTextInputDialog(BuildContext context) async {
     return showDialog(
         context: context,
@@ -165,91 +182,112 @@ class _HomeState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 2, 76, 137),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.only(top: 60.0, left: 30.0, bottom: 30.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  child: Icon(
-                    Icons.list,
-                    size: 30.0,
-                  ),
-                  backgroundColor: Colors.white,
-                  radius: 30.0,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  "StockTRC",
-                  style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-                SizedBox(height: 8.0),
-                Text(
-                  "Add and Remove Vehicles",
-                  style: TextStyle(fontSize: 20.0, color: Colors.white),
-                )
-              ],
-            ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color.fromARGB(255, 26, 123, 226),
+              const Color.fromARGB(255, 255, 255, 255)
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: items == null
-                    ? Center(child: Text("No vehicles available"))
-                    : ListView.builder(
-                        itemCount: items!.length,
-                        itemBuilder: (context, int index) {
-                          return Slidable(
-                            key: ValueKey(index),
-                            endActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              dismissible: DismissiblePane(onDismissed: () {}),
-                              children: [
-                                SlidableAction(
-                                  backgroundColor: Colors.black,
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: "Delete",
-                                  onPressed: (BuildContext context) {
-                                    print('${items![index]}');
-                                  },
-                                ),
-                              ],
-                            ),
-                            child: Card(
-                              borderOnForeground: false,
-                              child: ListTile(
-                                leading: Icon(Icons.task),
-                                title: Text('${items![index]['title']}'),
-                                subtitle:
-                                    Text('${items![index]['description']}'),
-                                trailing: Icon(Icons.arrow_back),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 60.0, left: 30.0, bottom: 30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    child: Icon(
+                      Icons.car_crash,
+                      size: 30.0,
+                      color: Colors.white,
+                    ),
+                    backgroundColor: const Color.fromARGB(255, 39, 129, 201),
+                    radius: 30.0,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "StockTRC",
+                    style: TextStyle(
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                  SizedBox(height: 8.0),
+                  Text(
+                    "Add and Remove Vehicles",
+                    style: TextStyle(fontSize: 20.0, color: Colors.white),
+                  )
+                ],
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20))),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: items == null
+                      ? Center(child: Text("No vehicles available"))
+                      : ListView.builder(
+                          itemCount: items!.length,
+                          itemBuilder: (context, int index) {
+                            return Slidable(
+                              key: ValueKey(index),
+                              endActionPane: ActionPane(
+                                motion: const ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 39, 129, 201),
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: "Delete",
+                                    onPressed: (BuildContext context) {
+                                      print('${items![index]["_id"]}');
+                                      deleteItem('${items![index]["_id"]}');
+                                    },
+                                  ),
+                                ],
+                              ),
+                              child: Card(
+                                borderOnForeground: false,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 10.0),
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.all(16.0),
+                                  leading: Icon(Icons.car_rental),
+                                  title: Text('${items![index]['title']}'),
+                                  subtitle:
+                                      Text('${items![index]['description']}'),
+                                  trailing: Icon(Icons.arrow_back),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _displayTextInputDialog(context),
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        backgroundColor: const Color.fromARGB(255, 39, 129, 201),
         tooltip: "Add vehicle",
       ),
     );
