@@ -15,18 +15,19 @@ exports.createVehicle = async (req,res, next)=>{
     }
 }
 
-exports.getUserVehicle = async (req,res, next)=>{
-    try{
-        const {userId} = req.body;
 
-        let vehicle = await vehicleServices.getVehicleData(userId);
-
-
-        res.json({status:true,success:vehicle});
-
-
-    }catch(error){
-        next(error);
+exports.getUserVehicle = async (req, res, next) => {
+    try {
+      const userId = req.query.userId || req.body.userId;
+      
+      if (!userId) {
+        return res.status(400).json({ status: false, message: "userId is required" });
+      }
+      
+      let vehicle = await vehicleServices.getVehicleData(userId);
+      res.json({ status: true, success: vehicle });
+    } catch (error) {
+      next(error);
     }
-}
+  };
 

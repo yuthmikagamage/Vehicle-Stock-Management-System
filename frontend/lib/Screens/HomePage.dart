@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/config.dart';
@@ -16,6 +17,9 @@ class _HomeState extends State<HomePage> {
   late String userId;
   TextEditingController _vehicleTile = TextEditingController();
   TextEditingController _vehicleDesc = TextEditingController();
+
+  List? items;
+
   bool _isLoading = false;
 
   @override
@@ -23,6 +27,8 @@ class _HomeState extends State<HomePage> {
     super.initState();
     Map<String, dynamic> jwtDecodedToken = JwtDecoder.decode(widget.token);
     userId = jwtDecodedToken['_id'];
+
+    getVehiclesList(userId);
   }
 
   void addVehicle() async {
@@ -56,6 +62,7 @@ class _HomeState extends State<HomePage> {
             );
             _vehicleTile.clear();
             _vehicleDesc.clear();
+            getVehiclesList(userId);
             Navigator.pop(context);
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -71,6 +78,39 @@ class _HomeState extends State<HomePage> {
           SnackBar(content: Text('Error: $e')),
         );
       }
+    }
+  }
+
+  void getVehiclesList(userId) async {
+    try {
+      var response = await http.get(
+        Uri.parse('$getVehicles?userId=$userId'),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
+      var jsonResponse = jsonDecode(response.body);
+
+      if (jsonResponse != null && jsonResponse['success'] != null) {
+        setState(() {
+          items = jsonResponse['success'];
+          if (items!.isEmpty) {
+            print("Empty vehicle list returned");
+          }
+        });
+      } else {
+        print("Invalid response format: $jsonResponse");
+        setState(() {
+          items = [];
+        });
+      }
+    } catch (e) {
+      print("Error fetching vehicles: $e");
+      setState(() {
+        items = [];
+      });
     }
   }
 
@@ -125,15 +165,87 @@ class _HomeState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home Page')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('User ID: $userId'),
-            if (_isLoading) CircularProgressIndicator(),
-          ],
-        ),
+      backgroundColor: const Color.fromARGB(255, 2, 76, 137),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 60.0, left: 30.0, bottom: 30.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  child: Icon(
+                    Icons.list,
+                    size: 30.0,
+                  ),
+                  backgroundColor: Colors.white,
+                  radius: 30.0,
+                ),
+                SizedBox(height: 10),
+                Text(
+                  "StockTRC",
+                  style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                ),
+                SizedBox(height: 8.0),
+                Text(
+                  "Add and Remove Vehicles",
+                  style: TextStyle(fontSize: 20.0, color: Colors.white),
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: items == null
+                    ? Center(child: Text("No vehicles available"))
+                    : ListView.builder(
+                        itemCount: items!.length,
+                        itemBuilder: (context, int index) {
+                          return Slidable(
+                            key: ValueKey(index),
+                            endActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              dismissible: DismissiblePane(onDismissed: () {}),
+                              children: [
+                                SlidableAction(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: "Delete",
+                                  onPressed: (BuildContext context) {
+                                    print('${items![index]}');
+                                  },
+                                ),
+                              ],
+                            ),
+                            child: Card(
+                              borderOnForeground: false,
+                              child: ListTile(
+                                leading: Icon(Icons.task),
+                                title: Text('${items![index]['title']}'),
+                                subtitle:
+                                    Text('${items![index]['description']}'),
+                                trailing: Icon(Icons.arrow_back),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _displayTextInputDialog(context),
