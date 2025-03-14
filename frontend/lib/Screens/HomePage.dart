@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:frontend/Screens/ChatPage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontend/config.dart';
@@ -21,6 +22,7 @@ class _HomeState extends State<HomePage> {
   List? items;
 
   bool _isLoading = false;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -179,6 +181,19 @@ class _HomeState extends State<HomePage> {
         });
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index == 1) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ChatPage(token: widget.token)),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -289,6 +304,29 @@ class _HomeState extends State<HomePage> {
         ),
         backgroundColor: const Color.fromARGB(255, 39, 129, 201),
         tooltip: "Add vehicle",
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.home,
+              color: Colors.white,
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.chat,
+              color: Colors.white,
+            ),
+            label: 'Chat',
+          ),
+        ],
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        backgroundColor: const Color.fromARGB(255, 39, 129, 201),
       ),
     );
   }
